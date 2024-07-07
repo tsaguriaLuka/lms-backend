@@ -17,7 +17,7 @@ import { Response, Request } from 'express';
 export class AuthorizationController {
   constructor(private authorizationService: AuthorizationService) {}
 
-  @Post('login')
+  @Post('auth/login')
   @UsePipes(new ValidationPipe())
   async authorizeUser(
     @Body() payload: AuthorizeUserDto,
@@ -42,14 +42,14 @@ export class AuthorizationController {
     };
   }
 
-  @Post('logout')
+  @Post('auth/logout')
   async logout(@Res({ passthrough: true }) res: Response) {
     this.authorizationService.removeRefreshTokenToResponse(res);
 
     return true;
   }
 
-  @Post('login/access-token')
+  @Post('auth/login/access-token')
   async getNewToken(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
