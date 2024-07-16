@@ -2,6 +2,7 @@ import * as fs from 'fs';
 
 import { Injectable } from '@nestjs/common';
 import { parse } from 'dotenv';
+import { JwtSignOptions } from '@nestjs/jwt';
 
 @Injectable()
 export class ConfigService {
@@ -25,6 +26,21 @@ export class ConfigService {
     return {
       host: this.get('SERVER_HOST'),
       port: this.getNumber('SERVER_PORT'),
+    };
+  }
+
+  get jwtParams() {
+    return {
+      tokenTTL: {
+        access: '1h',
+        refresh: '7d',
+      },
+    };
+  }
+
+  get getJwtConfig(): JwtSignOptions {
+    return {
+      secret: this.get('JWT_SECRET'),
     };
   }
 

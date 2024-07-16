@@ -3,7 +3,8 @@ import { AuthorizationService } from './authorization.service';
 import { AuthorizationController } from './authorization.controller';
 import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
+import { ConfigService } from '../config/config.service';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
+      useFactory: (configService: ConfigService) => configService.getJwtConfig,
     }),
   ],
   providers: [AuthorizationService],
