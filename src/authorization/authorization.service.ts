@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { AuthorizeUserDto } from './dto/AuthorizeUser.dto';
+import { LoginUserRequestDto } from './dto/login-user-request';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 
@@ -14,7 +14,7 @@ export class AuthorizationService {
     private usersService: UsersService,
   ) {}
 
-  async authorize(payload: AuthorizeUserDto) {
+  async authorize(payload: LoginUserRequestDto) {
     const user = await this.usersService.getUserByEmail(payload.email);
 
     if (!user)
@@ -49,9 +49,9 @@ export class AuthorizationService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...user } = await this.usersService.getUserById(
       result.id,
-    );
+    )[0];
 
-    const tokens = this.issueTokens(user.id);
+    const tokens = this.issueTokens(user[0].id);
 
     return {
       user,

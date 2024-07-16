@@ -1,34 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { User } from '../schemes/User.schema';
-import { Model } from 'mongoose';
-import { CreateUserDto } from './dto/CreateUser.dto';
-import { UpdateUserDto } from './dto/UpdateUser.dto';
+import { UserCreateDto } from './dto/user-create.dto';
+import { UserUpdateDto } from './dto/user-update.dto';
+import { Repository } from 'typeorm';
+import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(private readonly userRepository: Repository<UserEntity>) {}
 
-  async createUser(createUserDto: CreateUserDto) {
-    const newUser = new this.userModel(createUserDto);
-    return await newUser.save();
-  }
-
-  getUsers(query: string) {
-    return query
-      ? this.userModel.findOne({ email: query }).exec()
-      : this.userModel.find();
+  async createUser(createUserDto: UserCreateDto) {
+    return this.userRepository.save(createUserDto);
   }
 
   getUserByEmail(email: string) {
-    return this.userModel.findOne({ email }).exec();
+    return this.userRepository.findOneOrFail({ where: { email } });
+  }
+
+  getUsers(query: string) {
+    return query ? this.getUserByEmail(query) : this.userRepository.find();
   }
 
   getUserById(id: string) {
-    return this.userModel.findById(id);
+    return this.userRepository.find({ where: { id } });
   }
 
-  updateUser(id: string, updateUserDto: UpdateUserDto) {
-    return this.userModel.findByIdAndUpdate(id, updateUserDto);
+  updateUser(id: string, updateUserDto: UserUpdateDto) {
+    return this.userRepository.update(id, updateUserDto);
   }
 }

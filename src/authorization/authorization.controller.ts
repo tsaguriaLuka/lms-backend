@@ -10,7 +10,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { AuthorizationService } from './authorization.service';
-import { AuthorizeUserDto } from './dto/AuthorizeUser.dto';
+import { LoginUserRequestDto } from './dto/login-user-request';
 import { Response, Request } from 'express';
 
 @Controller()
@@ -20,7 +20,7 @@ export class AuthorizationController {
   @Post('auth/login')
   @UsePipes(new ValidationPipe())
   async authorizeUser(
-    @Body() payload: AuthorizeUserDto,
+    @Body() payload: LoginUserRequestDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     const { refreshToken, ...response } =

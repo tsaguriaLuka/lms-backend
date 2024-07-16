@@ -11,9 +11,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/CreateUser.dto';
-import mongoose from 'mongoose';
-import { UpdateUserDto } from './dto/UpdateUser.dto';
+import { UserCreateDto } from './dto/user-create.dto';
+import { UserUpdateDto } from './dto/user-update.dto';
 
 @Controller('users')
 export class UsersController {
@@ -21,7 +20,7 @@ export class UsersController {
 
   @Post()
   @UsePipes(new ValidationPipe())
-  createUser(@Body() createUserDto: CreateUserDto) {
+  createUser(@Body() createUserDto: UserCreateDto) {
     return this.usersService.createUser(createUserDto);
   }
 
@@ -36,33 +35,19 @@ export class UsersController {
 
   @Get(':id')
   async getUserById(@Param('id') id: string) {
-    const isValid = mongoose.Types.ObjectId.isValid(id);
-
-    if (!isValid) throw new HttpException('User not found', 404);
-
     const user = await this.usersService.getUserById(id);
 
     if (!user) throw new HttpException('User not found', 404);
 
-    return {
-      email: user?.email,
-      firstName: user?.firstName,
-      lastName: user?.lastName,
-      password: user?.password,
-      id: user?._id
-    }
+    return user;
   }
 
   @Put(':id')
   @UsePipes(new ValidationPipe())
   async updateUser(
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updateUserDto: UserUpdateDto,
     @Param('id') id: string,
   ) {
-    const isValid = mongoose.Types.ObjectId.isValid(id);
-
-    if (!isValid) throw new HttpException('Invalid Id', 400);
-
     const updatedUser = await this.usersService.updateUser(id, updateUserDto);
 
     if (!updatedUser) throw new HttpException('failed to update user', 404);
