@@ -44,7 +44,13 @@ export class UsersController {
 
     if (!user) throw new HttpException('User not found', 404);
 
-    return user;
+    return {
+      email: user?.email,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      password: user?.password,
+      id: user?._id
+    }
   }
 
   @Put(':id')
